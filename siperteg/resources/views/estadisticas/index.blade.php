@@ -1,3 +1,4 @@
+{{-- resources/views/statistics.blade.php --}}
 <x-app-layout>
   <x-slot name="header">
     <div class="flex justify-between items-center">
@@ -13,80 +14,55 @@
 
   <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
     @foreach([
-      ['id'=>'chartAbonados','title'=>'Abonados'],
-      ['id'=>'chartCobros','title'=>'Cobros'],
-      ['id'=>'chartFallas','title'=>'Fallas'],
-      ['id'=>'chartInstalaciones','title'=>'Instalaciones'],
-      ['id'=>'chartDefectos','title'=>'Defectos'],
+      ['id'=>'chartAbonados','title'=>'Abonados','type'=>'pie','colors'=>['#34d399','#f87171']],
+      ['id'=>'chartCobros','title'=>'Cobros','type'=>'pie','colors'=>['#60a5fa','#fbbf24']],
+      ['id'=>'chartFallas','title'=>'Fallas','type'=>'pie','colors'=>['#f87171','#34d399']],
+      ['id'=>'chartInstalaciones','title'=>'Instalaciones','type'=>'bar','colors'=>['#34d399','#f87171']],
+      ['id'=>'chartDefectos','title'=>'Defectos','type'=>'bar','colors'=>['#60a5fa','#fbbf24','#f472b6']],
     ] as $c)
-    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $c['title'] }}</h3>
-      {{-- width y height fijos --}}
-      <canvas id="{{ $c['id'] }}" width="400" height="240"></canvas>
-    </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow flex flex-col">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $c['title'] }}</h3>
+        <div class="w-full h-48">
+          <canvas id="{{ $c['id'] }}" class="w-full h-full"></canvas>
+        </div>
+      </div>
     @endforeach
   </div>
 
-  {{-- Chart.js --}}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-  window.onload = function() {
-    // Arrays inyectados
-    const abonLabels = @json($abonadosLabels);
-    const abonData   = @json($abonadosData);
+    window.addEventListener('DOMContentLoaded', () => {
+      const datasets = {
+        chartAbonados:     { labels: @json($abonadosLabels), data: @json($abonadosData),   type: 'pie', colors: ['#34d399','#f87171'] },
+        chartCobros:       { labels: @json($cobrosLabels),   data: @json($cobrosData),     type: 'pie', colors: ['#60a5fa','#fbbf24'] },
+        chartFallas:       { labels: @json($fallasLabels),   data: @json($fallasData),     type: 'pie', colors: ['#f87171','#34d399'] },
+        chartInstalaciones:{ labels: @json($instLabels),     data: @json($instData),       type: 'bar', colors: ['#34d399','#f87171'] },
+        chartDefectos:     { labels: @json($defLabels),      data: @json($defData),        type: 'bar', colors: ['#60a5fa','#fbbf24','#f472b6'] },
+      };
 
-    const cobLabels = @json($cobrosLabels);
-    const cobData   = @json($cobrosData);
-
-    const falLabels = @json($fallasLabels);
-    const falData   = @json($fallasData);
-
-    const insLabels = @json($instLabels);
-    const insData   = @json($instData);
-
-    const defLabels = @json($defLabels);
-    const defData   = @json($defData);
-
-    // Helpers
-    function pieChart(id, labels, data, colors) {
-      new Chart(document.getElementById(id), {
-        type: 'pie',
-        data: { labels, datasets: [{ data, backgroundColor: colors }] },
-        options: {
-          responsive: false,            // ❌ desactivamos resize
-          maintainAspectRatio: false    // ❌ no recalcula tamaño
-        }
+      Object.entries(datasets).forEach(([id, cfg]) => {
+        const ctx = document.getElementById(id).getContext('2d');
+        new Chart(ctx, {
+          type: cfg.type,
+          data: {
+            labels: cfg.labels,
+            datasets: [{
+              label: cfg.type === 'bar' ? '# de registros' : undefined,
+              data: cfg.data,
+              backgroundColor: cfg.colors
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            ...(cfg.type === 'bar' && {
+              scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 } }
+              }
+            })
+          }
+        });
       });
-    }
-    function barChart(id, labels, data, colors) {
-      new Chart(document.getElementById(id), {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: '# de registros',
-            data,
-            backgroundColor: colors
-          }]
-        },
-        options: {
-          responsive: false,
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, ticks: { precision:0 } } }
-        }
-      });
-    }
-
-    // Colores
-    const two = ['#34d399','#f87171'];
-    const three = ['#60a5fa','#fbbf24','#f472b6'];
-
-    // Crear
-    pieChart('chartAbonados', abonLabels, abonData, two);
-    pieChart('chartCobros',   cobLabels, cobData,   ['#60a5fa','#fbbf24']);
-    pieChart('chartFallas',   falLabels, falData,   ['#f87171','#34d399']);
-    barChart('chartInstalaciones', insLabels, insData, two);
-    barChart('chartDefectos',      defLabels, defData, three);
-  };
+    });
   </script>
 </x-app-layout>

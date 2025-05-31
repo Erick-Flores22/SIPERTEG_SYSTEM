@@ -41,7 +41,7 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Celular</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dirección</th>
@@ -53,7 +53,6 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($instalaciones as $instalacion)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $instalacion->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $instalacion->nombre }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $instalacion->celular }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $instalacion->direccion }}</td>
@@ -66,7 +65,7 @@
                                     @method('PATCH')
                                     <button type="submit"
                                             class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                        {{ $instalacion->estado === 'PENDIENTE' ? 'Marcar Completada' : 'Marcar Pendiente' }}
+                                        {{ $instalacion->estado === 'PENDIENTE' ? 'M/Completada' : 'M/Pendiente' }}
                                     </button>
                                 </form>
                             </td>

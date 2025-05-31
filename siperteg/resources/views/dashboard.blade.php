@@ -35,7 +35,7 @@
             ['route'=>'defectos.index','label'=>'Defectos','icon'=>'M12 4v16m8-8H4'],
             ['route'=>'nodos.index','label'=>'Nodos','icon'=>'M4 6h16M4 12h16M4 18h16'],
             ['route'=>'cajas_distribucion.index','label'=>'Cajas','icon'=>'M20 12H4m16 0l-4-4m4 4l-4 4'],
-            ['route'=>'datos_tecnicos.index','label'=>'Datos Tec','icon'=>'M12 8c.667 0 1.333.333 2 1'],
+            ['route'=>'estadisticas.index','label'=>'Estadisticas','icon'=>'M12 8c.667 0 1.333.333 2 1'],
           ];
         @endphp
 
